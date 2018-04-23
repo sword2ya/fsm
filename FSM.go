@@ -50,7 +50,8 @@ func (f *FSM) ProcessEvent(e EventInterface) error {
 
 	f.CurState.Exit(f, e)
 	transition.Process(f, e)
-	dState.Entry(f, e)
+	f.CurState = dState
+	f.CurState.Entry(f, e)
 	return nil
 }
 
@@ -64,4 +65,20 @@ func (f *FSM) AddStates(states ...StateInterface) {
 	for _, s := range states {
 		f.States[s.ID()] = s
 	}
+}
+
+// SetState 设置当前状态
+func (f *FSM) SetState(stateID StateID) {
+	f.CurState = f.States[stateID]
+}
+
+// AddTransition 添加转换
+func (f *FSM) AddTransition(stateID StateID, eventID EventID, transition TransitionInterface) {
+	if _, ok := f.TransitionTable[stateID]; !ok {
+		f.TransitionTable[stateID] = make(map[EventID][]TransitionInterface)
+	}
+	if _, ok := f.TransitionTable[stateID][eventID]; !ok {
+		f.TransitionTable[stateID][eventID] = []TransitionInterface{}
+	}
+	f.TransitionTable[stateID][eventID] = append(f.TransitionTable[stateID][eventID], transition)
 }

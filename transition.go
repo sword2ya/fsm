@@ -19,6 +19,15 @@ type Transition struct {
 	actions     []ActionInterface
 }
 
+// NewTransition 创建 Transition 对象
+func NewTransition(destination StateID) *Transition {
+	return &Transition{
+		destination: destination,
+		validators:  []Validator{},
+		actions:     []ActionInterface{},
+	}
+}
+
 var _ TransitionInterface = new(Transition)
 
 // Valid 验证转换是否能进行
@@ -41,4 +50,14 @@ func (t *Transition) Process(f FSMInterface, e EventInterface) {
 // Destination 目标状态 ID
 func (t *Transition) Destination() StateID {
 	return t.destination
+}
+
+// AddValidators 添加验证器
+func (t *Transition) AddValidators(validators ...Validator) {
+	t.validators = append(t.validators, validators...)
+}
+
+// AddActions 添加行为
+func (t *Transition) AddActions(actions ...ActionInterface) {
+	t.actions = append(t.actions, actions...)
 }

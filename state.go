@@ -24,6 +24,15 @@ type State struct {
 
 var _ StateInterface = new(State)
 
+// NewState 创建 State 对象
+func NewState(stateID StateID) *State {
+	return &State{
+		SID:          stateID,
+		EntryActions: []ActionInterface{},
+		ExitActions:  []ActionInterface{},
+	}
+}
+
 // ID 返回状态 ID
 func (s *State) ID() StateID {
 	return s.SID
